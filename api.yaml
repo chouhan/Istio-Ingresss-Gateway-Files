@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cpa-api-deployment
+  labels:
+    app: cpa-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cpa-api
+  template:
+    metadata:
+      labels:
+        app: cpa-api
+    spec:
+      containers:
+        - name: cpa-api
+          image: danielmapar/cpa-api:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MONGO_HOST
+              value: "mongodb.default.svc.cluster.local"
+            - name: MONGO_PORT
+              value: "27017"
+            - name: MONGO_DBNAME
+              value: "cpa"
+            - name: MONGO_USERNAME
+              value: "admin/admin"
+            - name: MONGO_PASSWORD
+              value: "password@123"
+            - name: LOCUST_URL
+              value: "http://192.168.23.92:8089"
+            - name: PROMETHEUS_URL
+              value: "http://192.168.23.92:9090"
+            - name: API_PORT
+              value: "5000"
+          resources:
+            requests:
+              cpu: 1000m
+              memory: 2028Mi
+            limits:
+              cpu: 1000m
+              memory: 2028Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cpa-api-service
+spec:
+  ports:
+  - port: 5001
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: cpa-api
+  type: LoadBalancer
