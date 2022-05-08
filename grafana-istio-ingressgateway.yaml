@@ -21,18 +21,23 @@ metadata:
   namespace: istio-system
 spec:
   hosts:
-  - "*"
+    - "*"
   gateways:
-  - grafana-gateway
+    - grafana-gateway
   http:
-  - match:
-    - uri:
-        exact: /
-  - route:
-    - destination:
-        host: grafana
-        port:
-          number: 3000
+    - name: metrics-route
+      match:
+        - uri:
+            prefix: /grafana/
+        - uri:
+            prefix: /grafana
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: grafana
+            port:
+              number: 3000
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
