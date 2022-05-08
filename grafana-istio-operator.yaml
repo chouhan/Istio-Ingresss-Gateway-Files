@@ -1,0 +1,12 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  namespace: istio-system
+spec:
+  addonComponents:
+    grafana:
+      enabled: true
+      env:
+        GF_SERVER_ROOT_URL: "%(protocol)s://%(domain)s/grafana/"
+        GF_SERVER_DOMAIN: "*"
+        GF_SERVER_SERVE_FROM_SUB_PATH: "false"
