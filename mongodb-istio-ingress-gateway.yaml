@@ -1,0 +1,36 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: my-gateway
+  namespace: staging
+spec:
+  selector:
+    istio: ingressgateway # use Istio default gateway implementation
+  servers:
+  - hosts:
+    - "my.mongodb.com"
+    port:
+      number: 27018
+      protocol: MONGO
+      name: mongo
+
+---      
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: myname
+  namespace: staging
+spec:
+  hosts:
+    - "my.mongodb.com"
+  gateways:
+  - my-gateway
+  tcp:
+  - match:
+    - port: 27018
+    route:
+    - destination:
+        host: my-service
+        port:
+          number: 27018  
