@@ -25,11 +25,19 @@ spec:
   gateways:
   - tracing-gateway
   http:
-  - route:
-    - destination:
-        host: tracing
-        port:
-          number: 80
+    - name: trace-route
+      match:
+        - uri:
+            prefix: /zipkin/
+        - uri:
+            prefix: /zipkin
+      rewrite:
+        uri: /zipkin/
+      route:
+        - destination:
+            host: tracing
+            port:
+              number: 80
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
