@@ -1,0 +1,51 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: jaeger-gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http-jaeger
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: jaeger-vs
+  namespace: istio-system
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - jaeger-gateway
+  http:
+    - name: jaeger-route
+      match:
+        - uri:
+            prefix: /jaeger/
+        - uri:
+            prefix: /jaeger
+      rewrite:
+        uri: /jaeger/
+      route:
+        - destination:
+            host: jaeger
+            port:
+              number: 80
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: jaeger
+  namespace: istio-system
+spec:
+  host: jaeger
+  trafficPolicy:
+    tls:
+      mode: DISABLE
