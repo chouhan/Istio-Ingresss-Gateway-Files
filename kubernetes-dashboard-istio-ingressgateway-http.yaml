@@ -35,7 +35,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
   name: kubernetes-dashboard
-  namespace: kube-system
+  namespace: default
 spec:
   host: kubernetes-dashboard
   trafficPolicy:
