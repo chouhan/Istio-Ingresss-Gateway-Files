@@ -1,0 +1,44 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: cpa-api-service-gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http-cpa-api-service
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: cpa-api-service-vs
+  namespace: istio-system
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - cpa-api-service-gateway
+  http:
+    - name: cpa-api-service-route
+      route:
+        - destination:
+            host: cpa-api-service
+            port:
+              number: 3000
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: 
+  namespace: istio-system
+spec:
+  host: cpa-api-service
+  trafficPolicy:
+    tls:
+      mode: DISABLE
