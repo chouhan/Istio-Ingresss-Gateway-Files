@@ -23,11 +23,17 @@ spec:
   gateways:
   - frontend-gateway
   http:
-  - match:
-    - uri:
-        exact: /frontend
-    route:
-    - destination:
-        host: frontend
-        port:
-          number: 3001
+    - match:
+      - uri:
+          prefix: "/frontend"
+      - uri:
+          prefix: "/login"
+      - uri:
+          prefix: "/static"
+      - uri:
+          regex: '^.*\.(ico|png|jpg)$'
+      route:
+      - destination:
+          host: cpa-frontend-service
+          port:
+            number: 3001
